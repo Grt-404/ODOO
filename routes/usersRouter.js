@@ -1,0 +1,20 @@
+const express = require('express');
+const userModel = require('../models/user-model');
+const router = express.Router();
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+const { registerUser, loginUser, logout } = require('../controllers/authController.js');
+const isLoggedin = require("../middlewares/isLoggedin");
+const upload = require('../config/multer-config');
+
+
+
+router.post('/register', registerUser);
+router.post('/login', loginUser);
+router.get('/logout', logout);
+
+
+
+
+
+module.exports = router;
