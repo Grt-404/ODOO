@@ -6,7 +6,7 @@ const { generateToken } = require('../utils/generateToken');
 module.exports.registerUser = async function (req, res) {
     try {
 
-        const { email, fullname, password } = req.body;
+        const { email, fullname, password, LoginID } = req.body;
         let user = await userModel.findOne({ email });
         if (user) {
             req.flash("error", "You already have an account, please login");
@@ -19,7 +19,8 @@ module.exports.registerUser = async function (req, res) {
         const createdUser = await userModel.create({
             email,
             password: hash,
-            fullname
+            fullname,
+            LoginID
         });
 
         const token = generateToken(createdUser);
@@ -34,10 +35,10 @@ module.exports.registerUser = async function (req, res) {
     }
 };
 module.exports.loginUser = async function (req, res) {
-    let { email, password } = req.body;
-    let user = await userModel.findOne({ email });
+    let { LoginID, password } = req.body;
+    let user = await userModel.findOne({ LoginID });
     if (!user) {
-        req.flash("error", "Email or password is incorrect");
+        req.flash("error", "LoginID is incorrect");
         return res.redirect("/");
 
     }
@@ -49,7 +50,7 @@ module.exports.loginUser = async function (req, res) {
         }
         else {
 
-            req.flash("error", "Email or password is incorrect");
+            req.flash("error", "LoginID or password is incorrect");
             return res.redirect("/");
 
 

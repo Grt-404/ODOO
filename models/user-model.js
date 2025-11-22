@@ -4,7 +4,13 @@ const mongoose = require('mongoose');
 const userSchema = mongoose.Schema({
     fullname: String,
     email: String,
-    // ADD THIS FIELD
+    LoginID: {
+        type: String,
+        required: true,
+        unique: true,
+        minlength: [6, "Login ID must be at least 6 characters long"],
+        maxlength: [12, "Login ID must not exceed 12 characters"]
+    },
     password: {
         type: String,
         required: true // Passwords should be required for authentication
