@@ -27,8 +27,10 @@ const warehouseSchema = mongoose.Schema({
     }
 }, { timestamps: true });
 
-// Pre-save hook to auto-generate the "Path" string
-warehouseSchema.pre('save', async function (next) {
+// --- FIX APPLIED BELOW ---
+// 1. Removed 'next' from the function parameters
+// 2. Removed 'next()' call at the end
+warehouseSchema.pre('save', async function () {
     this.path = this.name;
     if (this.parentLocation) {
         const parent = await this.constructor.findById(this.parentLocation);
@@ -36,7 +38,7 @@ warehouseSchema.pre('save', async function (next) {
             this.path = `${parent.path} / ${this.name}`;
         }
     }
-    next();
+    // The async function automatically returns a promise, signaling Mongoose to proceed.
 });
 
 module.exports = mongoose.model('warehouse', warehouseSchema);
