@@ -1,42 +1,31 @@
 const mongoose = require('mongoose');
 
-
 const userSchema = mongoose.Schema({
     fullname: String,
     email: String,
-    LoginID: {
-        type: String,
-        required: true,
-        unique: true,
-        minlength: [6, "Login ID must be at least 6 characters long"],
-        maxlength: [12, "Login ID must not exceed 12 characters"]
-    },
     password: {
         type: String,
-        required: true // Passwords should be required for authentication
-    },
-    cart: [
-        {
-            product: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "Product"
-            },
-            quantity: {
-                type: Number,
-                default: 1
-            }
-        }
-    ],
-
-    orders: {
-        type: Array,
-        default: []
+        required: true
     },
     contact: Number,
     image: {
-        type: String, // Simpler placeholder type
-        default: "" // Ensure a default value if you keep the field
-    }
+        type: String,
+        default: ""
+    },
+    // NEW: User Activity Stats
+    stats: {
+        operationsCount: { type: Number, default: 0 },
+        lastLogin: { type: Date, default: Date.now }
+    },
+    // NEW: Notifications Array
+    notifications: [
+        {
+            message: String,
+            type: { type: String, enum: ['info', 'warning', 'success', 'error'], default: 'info' },
+            date: { type: Date, default: Date.now },
+            read: { type: Boolean, default: false }
+        }
+    ]
+}, { timestamps: true });
 
-})
 module.exports = mongoose.model("user", userSchema);

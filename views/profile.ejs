@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>StockMaster | My Profile</title>
+    <meta content="width=device-width, initial-scale=1" name="viewport"/>
+    
+    <link href="https://cdn.prod.website-files.com/67a323a1c68594827fa0cca9/css/soscale-39349c-c66c87b5666753b1b89d5bc1.webflow.shared.1aa2f82cd.css" rel="stylesheet" type="text/css"/>
+    <link href="https://fonts.googleapis.com" rel="preconnect"/>
+    <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin="anonymous"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/webfont/1.6.26/webfont.js" type="text/javascript"></script>
+    <script type="text/javascript">WebFont.load({ google: { families: ["Montserrat:100,100italic,200,200italic,300,300italic,400,400italic,500,500italic,600,600italic,700,700italic,800,800italic,900,900italic","Oswald:200,300,400,500,600,700"] }});</script>
+    
+    <style>
+        /* Layout */
+        .dashboard-section { padding-top: 120px; padding-bottom: 60px; min-height: 100vh; background-color: #0e0e0e; color: white; }
+        .dashboard-grid { display: grid; grid-template-columns: 250px 1fr; gap: 40px; max-width: 1400px; margin: 0 auto; padding: 0 20px; }
+        
+        /* Sidebar */
+        .sidebar-menu { border-right: 1px solid rgba(255,255,255,0.1); padding-right: 20px; }
+        .sidebar-item { display: block; padding: 15px 0; color: #888; text-decoration: none; font-family: 'Oswald', sans-serif; text-transform: uppercase; font-size: 16px; border-bottom: 1px solid rgba(255,255,255,0.05); transition: 0.3s; }
+        .sidebar-item:hover { color: #fff; padding-left: 5px; }
+        
+        /* Profile Card */
+        .profile-card { background: #1a1a1a; border: 1px solid rgba(255,255,255,0.1); padding: 40px; max-width: 800px; position: relative; }
+        
+        .profile-header { display: flex; align-items: center; gap: 30px; margin-bottom: 40px; padding-bottom: 40px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+        
+        /* Image Upload Styling */
+        .profile-img-container { 
+            width: 120px; height: 120px; border-radius: 50%; overflow: hidden; border: 2px solid #4dff88; 
+            position: relative; cursor: pointer;
+        }
+        .profile-img { width: 100%; height: 100%; object-fit: cover; }
+        .profile-img-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); display: flex; justify-content: center; align-items: center;
+            opacity: 0; transition: 0.3s; color: white; font-family: 'Oswald'; text-transform: uppercase; font-size: 12px; letter-spacing: 1px;
+        }
+        .profile-img-container:hover .profile-img-overlay { opacity: 1; }
+
+        /* Form Fields */
+        .form-group { margin-bottom: 25px; }
+        .form-label { display: block; color: #888; margin-bottom: 10px; font-family: 'Oswald'; text-transform: uppercase; font-size: 12px; letter-spacing: 1px; }
+        .form-input { 
+            width: 100%; padding: 15px; background: #0e0e0e; border: 1px solid rgba(255,255,255,0.1); 
+            color: white; font-family: 'Montserrat'; font-size: 14px; transition: 0.3s;
+        }
+        .form-input:focus { border-color: #4dff88; outline: none; }
+        .form-input:disabled { opacity: 0.5; cursor: not-allowed; border-color: transparent; background: #151515; }
+        
+        /* Buttons */
+        .save-btn { 
+            background: #4dff88; color: black; padding: 15px 40px; border: none; 
+            font-family: 'Oswald'; text-transform: uppercase; font-weight: bold; 
+            cursor: pointer; margin-top: 20px; letter-spacing: 1px; transition: 0.3s;
+        }
+        .save-btn:hover { background: white; transform: translateY(-2px); }
+
+        .w-webflow-badge { display: none !important; } 
+    </style>
+</head>
+<body class="body">
+
+    <nav class="hero-wrap">
+        <a href="/" class="header-text-left _1 fixed-right-mob w-inline-block">
+            <div class="letter-wrap black">STOCKMASTER</div>
+        </a>
+        <div class="header-text-left fixed-left">
+            <div class="header-text-left fix-size">
+                <a href="/home" class="menu-link-block w-inline-block"><div class="letter-wrap">Dashboard</div></a>
+                </div>
+        </div>
+        <div class="header-text-left fixed-center"><div class="hacker-text _1">User Settings</div></div>
+        <a href="/users/logout" class="header-text-left _1 fixed-right w-inline-block">
+            <img src="https://cdn.prod.website-files.com/67a323a1c68594827fa0cca9/67a323a1c68594827fa0ccb4_Vector.svg" alt="" class="arrow-black"/>
+            <div class="letter-wrap black">LOGOUT</div>
+        </a>
+    </nav>
+
+    <section class="dashboard-section">
+        <div class="dashboard-grid">
+            
+            <aside class="sidebar-menu">
+    <a href="/home" class="sidebar-item" style="margin-bottom: 30px;">← Back to Dashboard</a>
+    <h3 class="form-label" style="color:white; border-bottom: 1px solid #333; padding-bottom: 10px;">Account Settings</h3>
+    
+    <a href="/profile" class="sidebar-item <%= typeof activeTab !== 'undefined' && activeTab === 'personal' ? 'active' : '' %>">Personal Details</a>
+    <a href="/profile/security" class="sidebar-item <%= typeof activeTab !== 'undefined' && activeTab === 'security' ? 'active' : '' %>">Security</a>
+    <a href="/profile/notifications" class="sidebar-item <%= typeof activeTab !== 'undefined' && activeTab === 'notifications' ? 'active' : '' %>">Notifications</a>
+</aside>
+
+            <div class="main-content">
+                
+                <% if (success && success.length > 0) { %>
+                    <div style="background: rgba(77, 255, 136, 0.1); color: #4dff88; padding: 15px; border: 1px solid #4dff88; margin-bottom: 20px; font-family: 'Oswald'; letter-spacing: 1px;">
+                        <%= success %>
+                    </div>
+                <% } %>
+                <% if (error && error.length > 0) { %>
+                    <div style="background: rgba(255, 77, 77, 0.1); color: #ff4d4d; padding: 15px; border: 1px solid #ff4d4d; margin-bottom: 20px; font-family: 'Oswald'; letter-spacing: 1px;">
+                        <%= error %>
+                    </div>
+                <% } %>
+
+                <h2 style="font-family: 'Oswald'; font-size: 36px; margin-bottom: 10px; text-transform: uppercase;">My Profile</h2>
+                <p style="font-family: 'Montserrat'; color: #888; margin-bottom: 30px; font-size: 14px;">Manage your personal information and account settings.</p>
+
+                <form action="/profile/update" method="POST" enctype="multipart/form-data" class="profile-card">
+                    
+                    <div class="profile-header">
+                        <div class="profile-img-container" onclick="document.getElementById('imageUpload').click()">
+                            <% if(user.image) { %>
+                                <img src="data:image/jpeg;base64,<%= user.image %>" class="profile-img" id="imgPreview">
+                            <% } else { %>
+                                <img src="https://cdn.prod.website-files.com/67a323a1c68594827fa0cca9/67a61ab834076730d938dff5_Group%202147255216.svg" class="profile-img" id="imgPreview" style="padding: 35px; background: #222; opacity: 0.5;">
+                            <% } %>
+                            <div class="profile-img-overlay">
+                                <span>Upload Photo</span>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 style="font-family: 'Oswald'; font-size: 24px; margin: 0; text-transform: uppercase;"><%= user.fullname %></h3>
+                            <div style="font-family: 'Montserrat'; color: #888; font-size: 14px; margin-top: 5px;"><%= user.email %></div>
+                            <div style="font-family: 'Montserrat'; color: #4dff88; font-size: 11px; margin-top: 8px; text-transform: uppercase; letter-spacing: 1px; border: 1px solid #4dff88; display: inline-block; padding: 3px 8px; border-radius: 4px;">Admin Access</div>
+                        </div>
+                        <input type="file" name="image" id="imageUpload" style="display: none;" onchange="previewImage(this)">
+                    </div>
+
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <div class="form-group">
+                            <label class="form-label">Full Name</label>
+                            <input type="text" name="fullname" class="form-input" value="<%= user.fullname %>">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Contact Number</label>
+                            <input type="number" name="contact" class="form-input" value="<%= user.contact || '' %>" placeholder="+91 0000000000">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Email Address</label>
+                        <input type="email" class="form-input" value="<%= user.email %>" disabled>
+                        <div style="font-size: 11px; color: #555; margin-top: 5px; font-family: 'Montserrat';">To change your email, please contact support.</div>
+                    </div>
+
+                    <button type="submit" class="save-btn">Save Changes</button>
+
+                </form>
+
+            </div>
+        </div>
+    </section>
+
+    <script>
+        function previewImage(input) {
+            if (input.files && input.files[0]) {
+                var reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = document.getElementById('imgPreview');
+                    img.src = e.target.result;
+                    img.style.padding = '0'; // Remove padding if it was placeholder
+                    img.style.background = 'transparent';
+                    img.style.opacity = '1';
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+    </script>
+</body>
+</html>
