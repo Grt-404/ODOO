@@ -6,16 +6,17 @@ const productSchema = mongoose.Schema({
     category: { type: String, required: true, trim: true },
     unitOfMeasure: { type: String, required: true, trim: true },
 
-    // NEW: Track stock per warehouse
+    // NEW: Dynamic Threshold (User sets this)
+    minimumStock: {
+        type: Number,
+        default: 10 // Default fallback if user doesn't set it
+    },
+
     stockByLocation: [{
-        warehouse: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'warehouse'
-        },
+        warehouse: { type: mongoose.Schema.Types.ObjectId, ref: 'warehouse' },
         quantity: { type: Number, default: 0 }
     }],
 
-    // We keep this as a calculated total for easy display on dashboards
     totalStock: { type: Number, default: 0 }
 }, { timestamps: true });
 

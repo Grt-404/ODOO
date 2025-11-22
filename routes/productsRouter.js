@@ -27,12 +27,12 @@ router.get('/', isLoggedIn, async (req, res) => {
 // POST: Create Product (Now handles Initial Location)
 router.post('/create', isLoggedIn, async (req, res) => {
     try {
-        let { name, sku, category, unitOfMeasure, stock, initialWarehouse } = req.body;
+        // Get minimumStock from body
+        let { name, sku, category, unitOfMeasure, stock, initialWarehouse, minimumStock } = req.body;
 
         let stockByLocation = [];
         let totalStock = 0;
 
-        // If user provides opening stock, they MUST provide a location
         if (stock && stock > 0) {
             if (!initialWarehouse) {
                 req.flash('success', 'Error: Please select a warehouse for initial stock.');
@@ -50,8 +50,9 @@ router.post('/create', isLoggedIn, async (req, res) => {
             sku,
             category,
             unitOfMeasure,
-            stockByLocation, // Save the specific location data
-            totalStock       // Save the total
+            minimumStock: Number(minimumStock) || 10, // Save user preference or default to 10
+            stockByLocation,
+            totalStock
         });
 
         req.flash('success', 'Product created successfully');
@@ -60,7 +61,6 @@ router.post('/create', isLoggedIn, async (req, res) => {
         res.send(err.message);
     }
 });
-
 // ... (Keep History Route same as before) ...
 router.get('/:id/history', isLoggedIn, async (req, res) => {
     const product = await productModel.findById(req.params.id);

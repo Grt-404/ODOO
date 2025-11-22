@@ -10,7 +10,7 @@ const expressSession = require("express-session");
 const usersRouter = require('./routes/usersRouter');
 const productsRouter = require('./routes/productsRouter');
 const operationsRouter = require('./routes/operationsRouter');
-const warehouseRouter = require('./routes/warehouseRouter');
+const warehouseRouter = require('./routes/wareHouseRouter');
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

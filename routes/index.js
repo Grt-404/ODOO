@@ -61,42 +61,44 @@ router.post('/profile/update', isLoggedin, upload.single('image'), async (req, r
     }
 });
 // --- DASHBOARD ROUTE UPDATED FOR ALERTS ---
+// ... inside router.get('/home', ...)
+
 router.get('/home', isLoggedin, async (req, res) => {
     try {
-        // 1. Define Low Stock Threshold
-        const THRESHOLD = 10;
+        // Remove the hardcoded line: const THRESHOLD = 10; 
 
-        // 2. Fetch Data in Parallel
         const [totalProducts, recentOps, allProducts] = await Promise.all([
             productModel.countDocuments(),
             operationModel.find().sort({ createdAt: -1 }).limit(5).populate('items.product'),
-            // Fetch products to calculate specific location alerts
             productModel.find().populate('stockByLocation.warehouse')
         ]);
 
-        // 3. Calculate Logic for Alerts
         let pendingReceipts = await operationModel.countDocuments({ type: 'Receipt', status: 'Draft' });
         let pendingDeliveries = await operationModel.countDocuments({ type: 'Delivery', status: 'Draft' });
 
-        // Generate Alerts List: Check EVERY location of EVERY product
         let alerts = [];
-        let lowStockCount = 0; // Count of unique products that are low (Total stock)
+        let lowStockCount = 0;
 
         allProducts.forEach(product => {
+            // USE DYNAMIC THRESHOLD HERE
+            const limit = product.minimumStock || 10;
+
             // Check Global Stock
-            if (product.totalStock <= THRESHOLD) {
+            if (product.totalStock <= limit) {
                 lowStockCount++;
             }
 
             // Check Specific Warehouse Stock
             if (product.stockByLocation && product.stockByLocation.length > 0) {
                 product.stockByLocation.forEach(loc => {
-                    if (loc.quantity <= THRESHOLD && loc.warehouse) {
+                    // Alert if a specific warehouse is below the limit
+                    if (loc.quantity <= limit && loc.warehouse) {
                         alerts.push({
                             sku: product.sku,
                             name: product.name,
                             warehouse: loc.warehouse.name,
-                            quantity: loc.quantity
+                            quantity: loc.quantity,
+                            limit: limit // Pass the limit to the view so user knows why it alerted
                         });
                     }
                 });
@@ -109,15 +111,14 @@ router.get('/home', isLoggedin, async (req, res) => {
             pendingReceipts,
             pendingDeliveries,
             recentOps,
-            alerts, // Pass the detailed alerts to the view
+            alerts,
             user: req.user,
             success: req.flash('success'),
             error: req.flash('error')
         });
 
     } catch (err) {
-        console.error("Dashboard Error:", err);
-        req.flash("error", "Failed to load dashboard data");
+        console.error(err);
         res.redirect('/');
     }
 });
